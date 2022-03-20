@@ -1,0 +1,21 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::prefix('base')->group(function() {
+    Route::get('/', 'BaseController@index');
+});
+
+
+Route::prefix('settings')->group(function() {
+    Route::get('/', 'SettingsController@index')->name("settings.general.index");
+});

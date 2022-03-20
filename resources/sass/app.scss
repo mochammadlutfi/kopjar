@@ -1,0 +1,118 @@
+//
+// Codebase UI Framework
+// --------------------------------------------------
+
+// Bootstrap functions (original)
+@import '~bootstrap/scss/functions';
+
+// User variables (your own variable overrides)
+@import 'custom/variables';
+
+// Base variables and Bootstrap variable overrides
+@import 'base/variables';
+@import 'base/variables-themes';
+@import 'base/variables-bootstrap';
+
+// Bootstrap variables and mixins (original)
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+
+// Base mixins and Bootstrap overrides
+@import 'base/mixins';
+
+// Bootstrap components
+@import '~bootstrap/scss/root';
+@import '~bootstrap/scss/reboot';
+@import '~bootstrap/scss/type';
+@import '~bootstrap/scss/images';
+@import '~bootstrap/scss/code';
+@import '~bootstrap/scss/grid';
+@import '~bootstrap/scss/tables';
+@import '~bootstrap/scss/forms';
+@import '~bootstrap/scss/buttons';
+@import '~bootstrap/scss/transitions';
+@import '~bootstrap/scss/dropdown';
+@import '~bootstrap/scss/button-group';
+@import '~bootstrap/scss/input-group';
+@import '~bootstrap/scss/custom-forms';
+@import '~bootstrap/scss/nav';
+//@import '~bootstrap/scss/navbar';
+//@import '~bootstrap/scss/card';
+@import '~bootstrap/scss/breadcrumb';
+@import '~bootstrap/scss/pagination';
+@import '~bootstrap/scss/badge';
+@import '~bootstrap/scss/jumbotron';
+@import '~bootstrap/scss/alert';
+@import '~bootstrap/scss/progress';
+@import '~bootstrap/scss/media';
+@import '~bootstrap/scss/list-group';
+@import '~bootstrap/scss/close';
+@import '~bootstrap/scss/toasts';
+@import '~bootstrap/scss/modal';
+@import '~bootstrap/scss/tooltip';
+@import '~bootstrap/scss/popover';
+@import '~bootstrap/scss/carousel';
+@import '~bootstrap/scss/spinners';
+@import '~bootstrap/scss/utilities';
+@import '~bootstrap/scss/print';
+
+
+@import '~bootstrap-vue/src/components/dropdown/_dropdown.scss';
+
+// Extend Bootstrap styles and override the ones..
+// ..we can't alter with the provided variables
+@import 'base/reboot';
+@import 'base/type';
+@import 'base/grid';
+@import 'base/tables';
+@import 'base/forms';
+@import 'base/buttons';
+@import 'base/transitions';
+@import 'base/dropdown';
+@import 'base/custom-forms';
+@import 'base/nav';
+@import 'base/breadcrumb';
+@import 'base/pagination';
+@import 'base/badge';
+@import 'base/modal';
+@import 'base/popover';
+
+// base layout
+@import 'base/layout';
+@import 'base/header';
+@import 'base/sidebar';
+@import 'base/side-overlay';
+@import 'base/layout-variations';
+@import 'base/hero';
+@import 'base/block';
+
+// base components
+@import 'base/page-loader';
+@import 'base/nav-main';
+@import 'base/forms-material';
+@import 'base/images';
+@import 'base/lists';
+@import 'base/item';
+@import 'base/ribbon';
+@import 'base/options-overlay';
+@import 'base/scrumboard';
+
+// Print, utilities and themes
+@import 'base/print';
+@import 'base/utilities';
+@import 'base/themes';
+
+@import 'vendor/simplebar';
+@import 'vendor/simple-line-icons';
+@import 'vendor/font-awesome';
+@import 'flatpickr/dist/flatpickr.css';
+@import "vue-select/src/scss/vue-select.scss";
+@import '~sweetalert2/dist/sweetalert2.min.css';
+
+
+// RTL Support
+@import 'base/rtl-support';
+
+// User styles (your own styles/overrides)
+@import 'custom/main';
+@import 'custom/social-media';
