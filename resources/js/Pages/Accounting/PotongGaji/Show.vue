@@ -1,7 +1,13 @@
 <template>
     <BaseLayout>
         <div class="content">
-            <h2 class="content-heading">Detail Potong Gaji <small>{{ anggota.anggota_id }}</small></h2>
+            <div class="content-heading pt-0 mb-3">
+                Detail Piutang <small>{{ anggota.anggota_id }}</small>
+                
+                <div class="float-right">
+                    <a :href="route('accounting.potong_gaji.pdf', {id : anggota.anggota_id })" class="btn btn-sm btn-secondary" target="_blank">Print PDF</a>
+                </div>
+            </div>
             <div class="block block-rounded block-shadow">
                 <div class="block-content">
                     <div>ID Anggota :  <span class="font-w700">{{ anggota.anggota_id }}</span></div>
@@ -21,10 +27,10 @@
                         </thead>
                         <tbody>
                             <tr v-for="(d, i) in transaksi" :key="i">
-                                <td>{{ i+1 }}</td>
+                                <td class="text-center">{{ i+1 }}</td>
                                 <td>{{ d.nomor }}</td>
-                                <td>{{ d.jenis }}</td>
-                                <td>{{ d.tgl }}</td>
+                                <td>{{ getType(d.jenis) }}</td>
+                                <td>{{ format_date(d.tgl) }}</td>
                                 <td>{{ currency(d.total) }}</td>
                             </tr>
                         </tbody>
@@ -37,7 +43,7 @@
 
 <script>
 import BaseLayout from '@/Layouts/Authenticated.vue'
-
+import moment from 'moment';
 export default {
     components: {
         BaseLayout,
@@ -45,6 +51,23 @@ export default {
     props : {
         anggota : Object,
         transaksi : Array,
+    },
+    methods : {
+        format_date(value){
+            if (value) {
+                return moment(String(value)).format('DD MMMM YYYY')
+            }
+        },
+        getType(value){
+            if(value == 'setoran sukarela'){
+                return 'Simpanan Sukarela';
+            }else if(value == 'pendaftaran'){
+                return 'Pendaftaran';
+            }else{
+                return 'Simpanan Wajib'
+            }
+
+        }
     }
 }
 </script>

@@ -1,7 +1,28 @@
 <template>
     <BaseLayout>
         <div class="content">
-            <h2 class="content-heading">Piutang Potong Gaji</h2>
+            <div class="content-heading pt-0 mb-3">
+                Piutang Anggota
+                
+                <div class="float-right">
+                    <button type="button" class="btn btn-primary btn-noborder btn-sm mr-2" @click="confirmPayment" v-if="selected.length">
+                        <i class="si si-check mr-1"></i>
+                        Konfirmasi {{ selected.length }} data
+                    </button>
+
+                    <b-dropdown id="download" size="sm">
+                    <template #button-content>
+                        Download
+                    </template>
+                    <b-dropdown-item :href="route('accounting.potong_gaji.exportExcel')" target="_blank">
+                        To Excel
+                    </b-dropdown-item>
+                    <b-dropdown-item :href="route('accounting.potong_gaji.exportPDF')" target="_blank">
+                        To PDF
+                    </b-dropdown-item>
+                </b-dropdown>
+                </div>
+            </div>
             <div class="block block-rounded block-shadow-2 block-bordered mb-5">
                 <div class="block-content px-0 py-0">
                     <table class="table table-striped table-vcenter table-hover mb-0">
@@ -106,7 +127,36 @@ export default {
                     
                 });
 			}
-		}
+		},
+        confirmPayment(){
+            this.$swal.fire({
+                title: 'Tunggu Sebentar...',
+                text: '',
+                imageUrl: window._asset + 'media/loading.gif',
+                showConfirmButton: false,
+                // allowOutsideClick: false,
+            });
+            let data = {
+                ids : this.selected,
+                from : "index",
+            }
+            let form = this.$inertia.form(data)
+            let url = this.route("accounting.potong_gaji.confirm");
+            form.post(url, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    this.$swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: `Data Berhasil Disimpan!`,
+                        showConfirmButton: false,
+                    });
+                },
+                onFinish: () => {
+                    this.$swal.close();
+                },
+            });
+        }
     }
 }
 </script>

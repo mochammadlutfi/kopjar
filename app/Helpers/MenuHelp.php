@@ -88,7 +88,7 @@ class MenuHelp
               "subActivePaths" => 'accounting.*',
               "sub" => [
                 [
-                    "name" => 'Tagihan Potong Gaji',
+                    "name" => 'Piutang',
                     "to" => 'accounting.potong_gaji.index',
                 ],
                 [
@@ -120,6 +120,10 @@ class MenuHelp
                     [
                         "name" => 'Simpanan',
                         "to" => 'accounting.report.simpanan',
+                    ],
+                    [
+                        "name" => 'Neraca Saldo',
+                        "to" => 'accounting.report.balance_sheet',
                     ],
                   ]
                 ],

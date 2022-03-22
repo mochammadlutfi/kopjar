@@ -59,14 +59,10 @@
                             <div class="form-group row">
                                 <label class="col-lg-4 col-form-label">Jenis Kelamin</label>
                                 <div class="col-lg-8">
-                                    <div class="custom-control custom-radio custom-control-inline mb-5">
-                                        <input class="custom-control-input" type="radio" name="jk" id="jk1" value="L" v-model="step1.jk">
-                                        <label class="custom-control-label" for="jk1">Laki-Laki</label>
-                                    </div>
-                                    <div class="custom-control custom-radio custom-control-inline mb-5">
-                                        <input class="custom-control-input" type="radio" name="jk" id="jk2" value="P" v-model="step1.jk">
-                                        <label class="custom-control-label" for="jk2">Perempuan</label>
-                                    </div>
+                                    <b-form-radio-group id="radio-group-2" v-model="step1.jk" :aria-describedby="ariaDescribedby" name="field-jk">
+                                        <b-form-radio value="L">Laki-Laki</b-form-radio>
+                                        <b-form-radio value="P">Perempuan</b-form-radio>
+                                    </b-form-radio-group>
                                     <div class="text-danger" id="error-jk"></div>
                                 </div>
                             </div>
@@ -84,18 +80,11 @@
                             <div class="form-group row">
                                 <label class="col-lg-4 col-form-label">Status Perkawinan</label>
                                 <div class="col-lg-8">
-                                    <div class="custom-control custom-radio custom-control-inline mb-5">
-                                        <input class="custom-control-input" type="radio" id="status_pernikahan1" value="Lajang" v-model="step1.perkawinan">
-                                        <label class="custom-control-label" for="status_pernikahan1">Lajang</label>
-                                    </div>
-                                    <div class="custom-control custom-radio custom-control-inline mb-5">
-                                        <input class="custom-control-input" type="radio" id="status_pernikahan2" value="Menikah" v-model="step1.perkawinan">
-                                        <label class="custom-control-label" for="status_pernikahan2">Menikah</label>
-                                    </div>
-                                    <div class="custom-control custom-radio custom-control-inline mb-5">
-                                        <input class="custom-control-input" type="radio" id="status_pernikahan3" value="Duda/Janda" v-model="step1.perkawinan">
-                                        <label class="custom-control-label" for="status_pernikahan3">Duda/Janda</label>
-                                    </div>
+                                    <b-form-radio-group id="radio-group-2" v-model="step1.perkawinan" :aria-describedby="ariaDescribedby" name="field-perkawinan">
+                                        <b-form-radio value="Lajang">Lajang</b-form-radio>
+                                        <b-form-radio value="Menikah">Menikah</b-form-radio>
+                                        <b-form-radio value="Duda/Janda">Duda/Janda</b-form-radio>
+                                    </b-form-radio-group>
                                     <div class="text-danger" id="error-status_pernikahan"></div>
                                 </div>
                             </div>
@@ -135,14 +124,10 @@
                             <div class="form-group row">
                                 <label class="col-lg-4 col-form-label">Status</label>
                                 <div class="col-lg-8">
-                                    <div class="custom-control custom-radio custom-control-inline mb-5">
-                                        <input class="custom-control-input" type="radio" id="pegawai" value="1" v-model="step1.tipe">
-                                        <label class="custom-control-label" for="pegawai">Pegawai</label>
-                                    </div>
-                                    <div class="custom-control custom-radio custom-control-inline mb-5">
-                                        <input class="custom-control-input" type="radio" id="non_pegawai" value="0" v-model="step1.tipe">
-                                        <label class="custom-control-label" for="non_pegawai">Non Pegawai</label>
-                                    </div>
+                                    <b-form-radio-group id="radio-group-2" v-model="step1.tipe" :aria-describedby="ariaDescribedby" name="field-status">
+                                        <b-form-radio value="1">Pegawai</b-form-radio>
+                                        <b-form-radio value="0">Non Pegawai</b-form-radio>
+                                    </b-form-radio-group>
                                 </div>
                             </div>
                             <div class="form-group row" v-if="step1.tipe == 1">
@@ -363,12 +348,16 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="form-group row">
-                                        <div class="col-lg-12">
-                                            <label>Keterangan (Optional)</label>
-                                            <textarea class="form-control" v-model="step3.keterangan" rows="3" placeholder="Masukan Keterangan (Jika Ada)"></textarea>
-                                        </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Metode Pembayaran</label>
+                                        <PaymentMethodSelect @done="(value) => form.payment_method_id = value"/>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Keterangan (Optional)</label>
+                                        <input type="text" id="field-keterangan" class="form-control" v-model="step3.keterangan">
                                     </div>
                                 </div>
                             </div>
@@ -459,6 +448,7 @@ import vSelect from 'vue-select';
 import _ from 'lodash';
 import moment from 'moment';
 import CurrencyInput  from '@/components/Form/CurrencyInput.vue';
+import PaymentMethodSelect from '@/components/Form/PaymentMethodSelect.vue';
 
 export default {
     setup () { 
@@ -474,7 +464,8 @@ export default {
         BaseLayout,
         flatPickr,
         vSelect,
-        CurrencyInput
+        CurrencyInput,
+        PaymentMethodSelect
     },
     data(){
         return {

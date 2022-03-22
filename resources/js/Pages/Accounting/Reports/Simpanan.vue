@@ -5,7 +5,6 @@
             <div class="block">
                 <div class="block-content">
                     <h3>Report Akumulasi Simpanan</h3>
-                    <h4>Report Akumulasi Simpanan</h4>
 
                     <table class="table table-bordered">
                         <thead>

@@ -158,7 +158,7 @@ class SukarelaWithdrawController extends Controller
                 $transaksi->tgl = Carbon::parse($request->tgl)->format('Y-m-d');
                 $transaksi->status = 1;
                 $transaksi->save();
-
+ 
 
                 $line = new TransaksiLine();
                 $line->jumlah = $request->amount;
@@ -173,12 +173,12 @@ class SukarelaWithdrawController extends Controller
                 $payment->tgl_bayar = Carbon::parse($request->tgl)->format('Y-m-d H:i:s');
                 $payment->jumlah = (int)$request->amount;
                 $payment->type = 'outbound';
-                $payment->status = 'confirm';
+                $payment->status = 'paid';
                 $transaksi->payment()->save($payment);
 
                 $simla = new SimlaTransaksi();
                 $simla->anggota_id = $request->anggota_id;
-                $simla->type = $request->type;
+                $simla->type = 'withdrawn';
                 $simla->credit = $request->amount;
                 $simla->debit = 0;
                 $transaksi->simla()->save($simla);

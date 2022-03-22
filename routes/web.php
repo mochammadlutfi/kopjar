@@ -208,7 +208,11 @@ Route::namespace('Staff')->group(function(){
             
             Route::group(['prefix' => 'potong-gaji', 'as' => 'potong_gaji.'], function () {
                 Route::get('/', 'PotongGajiController@index')->name('index');
+                Route::get('/export-excel', 'PotongGajiController@exportExcel')->name('exportExcel');
+                Route::get('/export-pdf', 'PotongGajiController@exportPDF')->name('exportPDF');
+                Route::post('/confirmPayment','PotongGajiController@confirmPayment')->name('confirm');
                 Route::get('/{anggota_id}', 'PotongGajiController@show')->name('show');
+                Route::get('/{anggota_id}/pdf', 'PotongGajiController@printPdf')->name('pdf');
             });
 
             

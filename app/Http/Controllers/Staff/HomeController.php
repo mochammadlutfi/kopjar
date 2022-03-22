@@ -51,6 +51,8 @@ class HomeController extends Controller
         ->whereMonth('created_at', $today)->get()->sum('jumlah');
 
         $anggota = Anggota::whereMonth('tgl_gabung', $today)->get()->count();
+
+        $trans = Transaksi::latest()->limit(9)->get();
         
 
         $overview = collect([
@@ -77,6 +79,7 @@ class HomeController extends Controller
             'overview' => $overview,
             'simpanan' => $this->chartSimpanan(),
             'keanggotaan' => $this->keanggotaan(),
+            'transaksi' => $trans
         ]);
     }
 

@@ -6,6 +6,7 @@ use App\Models\TransaksiLine;
 use App\Models\Transaksi;
 use App\Models\Anggota;
 
+use App\Models\Accounting\Payment;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
@@ -16,10 +17,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Storage;
 
+use App\Exports\PiutangExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 use App\Helpers\Collection;
 use Carbon\Carbon;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PotongGajiController extends Controller
 {
@@ -40,11 +43,10 @@ class PotongGajiController extends Controller
         $anggota = Anggota::where('tipe', 1)->latest()->get();
         $items = [];
         foreach($anggota as $ang){
-
-            
             $transaksi = Transaksi::whereHas(
                 'payment', function($q){
-                    return $q->where('payment_method_id', 2);
+                    return $q->where('payment_method_id', 2)
+                    ->where('status', 'unpaid');
                 },
             )
             ->where('anggota_id', $ang->anggota_id)
@@ -84,7 +86,8 @@ class PotongGajiController extends Controller
         
         $transaksi = Transaksi::whereHas(
             'payment', function($q){
-                return $q->where('payment_method_id', 2);
+                return $q->where('payment_method_id', 2)
+                ->where('status', 'unpaid');
             },
         )
         ->where('anggota_id', $anggota_id)
@@ -103,7 +106,51 @@ class PotongGajiController extends Controller
      * @param Request $request
      * @return Renderable
      */
-    public function exportExcel($anggota_id, Request $request)
+    public function exportExcel(Request $request)
+    {
+        $today = Carbon::now()->format('F');
+
+        return Excel::download(new PiutangExport, 'Piutang Anggota '. $today.'.xlsx');
+    }
+
+    
+    public function exportPDF(Request $request)
+    {
+        $today = Carbon::now()->format('m');
+
+        $anggota = Anggota::where('tipe', 1)->latest()->get();
+        $items = [];
+        foreach($anggota as $ang){
+            $transaksi = Transaksi::whereHas(
+                'payment', function($q){
+                    return $q->where('payment_method_id', 2)
+                    ->where('status', 'unpaid');
+                },
+            )
+            ->where('anggota_id', $ang->anggota_id)
+            ->whereMonth('tgl', $today)->get();
+            
+            if($transaksi->count() > 0){
+                $items[] = [
+                    'anggota_id' => $ang->anggota_id,
+                    'nama' => $ang->nama,
+                    'nip' => $ang->nip,
+                    'golongan' => $ang->golongan,
+                    'jumlah' => $transaksi->sum('total'),
+                    'list' => $transaksi
+                ];
+            }
+        }
+        
+        $pdf = PDF::loadView('exports/pdf/piutangMany', compact([
+            'items'
+        ]));
+        return $pdf->stream("Slip Tagihan Anggota.pdf");
+    }
+
+
+    
+    public function printPdf($anggota_id, Request $request)
     {
         $today = Carbon::now()->format('m');
         $anggota = Anggota::where('anggota_id', $anggota_id)->first();
@@ -115,12 +162,12 @@ class PotongGajiController extends Controller
         )
         ->where('anggota_id', $anggota_id)
         ->whereMonth('tgl', $today)->get();
-        
 
-        return Inertia::render('Accounting/PotongGaji/Show',[
-            'anggota' => $anggota,
-            'transaksi' => $transaksi
-        ]);
+        $pdf = PDF::loadView('exports/pdf/piutang', compact([
+            'anggota',
+            'transaksi'
+        ]));
+        return $pdf->stream("Slip Tagihan". "-". $anggota->anggota_id . $anggota->nama .".pdf");
     }
 
 
@@ -129,7 +176,7 @@ class PotongGajiController extends Controller
      * @param Request $request
      * @return Renderable
      */
-    public function update(Request $request)
+    public function updateState(Request $request)
     {
         $rules = [
             'name' => 'required',
@@ -144,6 +191,7 @@ class PotongGajiController extends Controller
             return back()->withErrors($validator->errors());
         }else{
             DB::beginTransaction();
+
             try{
                     $data = ProductBrand::find($request->id);
                     $data->name = $request->name;
@@ -165,21 +213,60 @@ class PotongGajiController extends Controller
                 DB::rollback();
                 return back();
             }
+
             DB::commit();
             return redirect()->route('admin.product.brand.index');
         }
     }
 
 
-    private function uploadFiles($file, $name){
-        $file_name = $name. '-' . uniqid() . '.' . $file->getClientOriginalExtension();
-        Storage::disk('public')->putFileAs(
-            'uploads/product/brands',
-            $file,
-            $file_name
-        );
-        
-        return 'uploads/product/brands/'.$file_name;
+    public function confirmPayment(Request $request){
+        // dd($request->all());
+        $rules = [
+            "ids.*" => 'required',
+        ];
+
+        $pesan = [
+            'ids.*.required' => 'Anggota Wajib Dipilih!',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $pesan);
+        if ($validator->fails()){
+            return back()->withErrors($validator->errors());
+        }else{
+            DB::beginTransaction();
+            $today = Carbon::now()->format('m');
+
+            try{
+                foreach($request->ids as $id){
+                    $anggota = Anggota::where('anggota_id', $id)->first();
+            
+                    if($anggota){
+                        $transaksi = Transaksi::whereHas(
+                            'payment', function($q){
+                                return $q->where('payment_method_id', 2)
+                                ->where('status', 'unpaid');
+                            },
+                        )
+                        ->where('anggota_id', $anggota->anggota_id)
+                        ->whereMonth('tgl', $today)->get();
+
+                        foreach($transaksi as $t){
+                            $payment = Payment::where('paymenttable_type', 'App\Models\Transaksi')->where('paymenttable_id', $t->id)->first();
+                            $payment->status = 'paid';
+                            $payment->save();
+                        }
+                    }
+                }
+            }catch(\QueryException $e){
+                DB::rollback();
+                return back();
+            }
+
+            DB::commit();
+            return redirect()->route('accounting.potong_gaji.index');
+        }
+
     }
 
 

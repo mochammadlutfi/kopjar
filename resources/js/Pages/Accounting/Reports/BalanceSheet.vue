@@ -4,7 +4,12 @@
             <h2 class="content-heading">Neraca Saldo</h2>
             <div class="block">
                 <div class="block-content">
-                    
+                    <div class="text-center">
+                        <h3 class="h4">Neraca Saldo</h3>
+                    </div>
+                    <div class="row">
+                        
+                    </div>
                 </div>
             </div>
         </div>

@@ -27,10 +27,35 @@
             </div>
             <div class="row">
                 <div class="col-8">
-                    <div class="content-head"></div>
-                    <div class="block">
-                        <div class="block-content">
-
+                    <div class="block block-rounded block-fx-shadow">
+                        <div class="block-header">
+                            <h3 class="block-title">Transaksi Terakhir</h3>
+                        </div>
+                        <div class="block-content p-0">
+                            <table class="table table-borderless table-striped table-vcenter">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th>No Transaksi</th>
+                                        <th>Jenis</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(t, i) in transaksi" :key="i" :href="getRoute(t)">
+                                        <td>{{ format_date(t.tgl) }}</td>
+                                        <td>{{ t.nomor }}</td>
+                                        <td>{{ t.jenis }}</td>
+                                        <td>{{ currency(t.total) }}</td>
+                                        <td>
+                                            <span class="badge badge-primary" v-if="t.status == 1">Done</span>
+                                            <span class="badge badge-danger" v-else-if="t.status == 2">Cancel</span>
+                                            <span class="badge badge-warning" v-else>Pending</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -71,7 +96,8 @@
 
 <script>
 import BaseLayout from '@/Layouts/Authenticated.vue';
-import Chart from 'chart.js'
+import Chart from 'chart.js';
+import moment from 'moment';
 
 
 import ChartjsLine from '@/components/Chartjs/Line'
@@ -132,6 +158,21 @@ export default {
         simpanan : Object,
         overview : Object,
         keanggotaan : Object,
+        transaksi : Array,
+    },
+    methods : {
+        format_date(value){
+            if (value) {
+                return moment(String(value)).format('DD MMM YYYY')
+            }
+        },
+        getRoute(data){
+            if(data.jenis == 'setoran sukarela'){
+                return this.route('simpanan.sukarela.show', { id : data.id});
+            }else{
+                return this.route('simpanan.wajib.show', { id : data.id});
+            }
+        }
     }
 }
 </script>
